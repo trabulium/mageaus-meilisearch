@@ -1,0 +1,108 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [1.19.0] - 2025-01-14
+
+### Initial Release
+
+This is the first packaged release of Maho Meilisearch, extracted and cleaned for distribution via Composer.
+
+#### Features
+
+**🚀 Lightning-Fast Search**
+- Sub-50ms search responses for instant user experience
+- Automatic typo tolerance and fuzzy matching
+- Real-time indexing when products change
+
+**🔍 Advanced Search Capabilities**
+- As-you-type autocomplete for products, categories, and pages
+- Faceted navigation with filtering by price, category, and attributes
+- Configurable smart ranking and relevancy rules
+- Multi-language support for international stores
+- Synonym support for improved search relevance
+
+**📊 Powerful Indexing**
+- Product, category, and CMS page indexing
+- Queue-based background processing for large catalogs (10,000+ products)
+- Partial reindexing for faster updates
+- Automatic reindexing when content changes
+
+**⚙️ Flexible Configuration**
+- Index prefixes for environment separation (dev/staging/prod)
+- Custom ranking rules and searchable attributes
+- Configurable faceting controls and stop words
+- Index settings export/import for configuration sharing
+
+#### Admin Interface
+- **Indexing Queue Management**: View and monitor queued items
+- **Reindex by SKU**: Manually reindex specific products
+- **Index Management**: Control all Meilisearch indexes from System → Index Management
+- **System Configuration**: Comprehensive settings in System → Configuration → Meilisearch
+
+#### Frontend Integration
+- **Autocomplete**: Dropdown with product suggestions, images, and prices
+- **Instant Search**: Full-page search with real-time results
+- **Faceted Navigation**: Filter and sort search results
+- **Customizable Templates**: Override in your theme
+
+#### Technical Details
+- Built for Maho Commerce 25.x+
+- Requires PHP 8.3+
+- Meilisearch server 1.0+
+- Encrypted API key storage
+- Queue system for large catalogs
+- Event-driven architecture
+- Proper error handling and fallbacks
+
+#### Security
+- Encrypted API key storage in database
+- Separate search-only API keys for frontend
+- HTTPS support for production environments
+
+#### Database Tables
+- `meilisearch_queue`: Background indexing queue
+- `meilisearch_queue_archive`: Archived queue items for history
+
+### Configuration Options
+- Server URL and API key configuration
+- Search-only API key for frontend security
+- Index prefix customization
+- Autocomplete and instant search toggles
+- Result count configuration
+- Minimum character threshold
+- Ranking rules customization
+- Searchable attributes configuration
+- Faceting attribute selection
+- Connection timeout settings
+
+### Installation Methods
+- Composer installation (recommended): `composer require mageaus/meilisearch`
+- Manual installation with file extraction
+- Automatic cache flushing and autoload generation
+
+### Documentation
+- Comprehensive README with installation guide
+- Configuration reference tables
+- Troubleshooting section
+- Advanced usage examples
+- Performance optimization tips
+- Security best practices
+
+---
+
+## Future Roadmap
+
+Potential features for future releases:
+
+- Multi-currency support in search results
+- Advanced analytics and search insights
+- A/B testing for ranking rules
+- Machine learning-based relevancy tuning
+- Category-specific ranking rules
+- Geo-search capabilities
+- Voice search integration
+- Search query history and trending searches

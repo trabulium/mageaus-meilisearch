@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<layout>
+    <meilisearch_search_handle>
+        <reference name="head">
+            <block type="core/template" before="js" template="meilisearch/internals/configuration.phtml" name="meilisearch-configuration"/>
+
+            <action method="addCss"><stylesheet>meilisearch/meilisearch.css</stylesheet></action>
+            <action method="addCss"><stylesheet>meilisearch/autocomplete.css</stylesheet></action>
+
+            <action method="addJs"><script>moogento/general/jquery.min.js</script></action>
+            <action method="addJs"><script>meilisearch/internals/frontend/Function.prototype.bind.js</script></action>
+            <action method="addJs"><script>meilisearch/internals/frontend/meilisearch-client.js</script></action>
+            <action method="addJs"><script>meilisearch/internals/frontend/meilisearchBundle.js</script></action>
+            <action method="addJs"><script>meilisearch/internals/frontend/common.js</script></action>
+
+            <block type="core/text" name="meilisearch-polyfill">
+                <action method="setText">
+                    <text>
+                        <![CDATA[
+                            <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+                            <!--[if lte IE 9]>
+                                <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
+                            <![endif]-->
+                        ]]>
+                    </text>
+                </action>
+            </block>
+        </reference>
+
+        <reference name="content">
+            <block type="core/template" before="content" template="meilisearch/internals/beforecontent.phtml" name="meilisearch-beforecontent"/>
+        </reference>
+    </meilisearch_search_handle>
+
+    <meilisearch_search_handle_with_topsearch>
+        <reference name="top.search">
+            <action method="setTemplate"><template>meilisearch/autocomplete.phtml</template></action>
+        </reference>
+    </meilisearch_search_handle_with_topsearch>
+
+    <meilisearch_search_handle_autocomplete>
+        <reference name="head">
+            <action method="addJs"><script>meilisearch/autocomplete.js</script></action>
+        </reference>
+
+        <reference name="before_body_end">
+            <!-- Multi-category Autocomplete templates -->
+            <block type="core/template" template="meilisearch/autocomplete/product.phtml" name="meilisearch-autocomplete-product"/>
+            <block type="core/template" template="meilisearch/autocomplete/category.phtml" name="meilisearch-autocomplete-category"/>
+            <block type="core/template" template="meilisearch/autocomplete/page.phtml" name="meilisearch-autocomplete-page"/>
+            <block type="core/template" template="meilisearch/autocomplete/attribute.phtml" name="meilisearch-autocomplete-attribute"/>
+            <block type="core/template" template="meilisearch/autocomplete/suggestion.phtml" name="meilisearch-autocomplete-suggestion"/>
+            <block type="core/template" template="meilisearch/autocomplete/menu.phtml" name="meilisearch-autocomplete-menu"/>
+
+            <!-- INSERT YOUR CUSTOM TEMPLATES HERE -->
+            <!-- Example: <block type="core/template" template="meilisearch/[autocomplete_or_instantsearch]/your_custom_template_name.phtml" name="meilisearch-your-custom-template-name"/> -->
+        </reference>
+    </meilisearch_search_handle_autocomplete>
+
+    <meilisearch_search_handle_instantsearch>
+        <reference name="head">
+            <action method="addJs"><script>meilisearch/instantsearch.js</script></action>
+        </reference>
+
+        <reference name="before_body_end">
+            <!-- Instant search results page templates -->
+            <block type="core/template" template="meilisearch/instantsearch/wrapper.phtml" name="meilisearch-instantsearch-wrapper"/>
+            <block type="core/template" template="meilisearch/instantsearch/hit.phtml" name="meilisearch-instantsearch-hit"/>
+            <block type="core/template" template="meilisearch/instantsearch/stats.phtml" name="meilisearch-instantsearch-stats"/>
+            <block type="core/template" template="meilisearch/instantsearch/refinementsItem.phtml" name="meilisearch-instantsearch-refinements-item"/>
+            <block type="core/template" template="meilisearch/instantsearch/currentRefinements.phtml" name="meilisearch-instantsearch-current-refinments"/>
+
+            <!-- INSERT YOUR CUSTOM TEMPLATES HERE -->
+            <!-- Example: <block type="core/template" template="meilisearch/[autocomplete_or_instantsearch]/your_custom_template_name.phtml" name="meilisearch-your-custom-template-name"/> -->
+        </reference>
+    </meilisearch_search_handle_instantsearch>
+
+    <meilisearch_search_handle_prevent_backend_rendering>
+        <reference name="left_first">
+            <action method="unsetChild"><name>catalog.leftnav</name></action>
+            <action method="unsetChild"><name>catalogsearch.leftnav</name></action>
+        </reference>
+
+        <reference name="left">
+            <action method="unsetChild"><name>tags_popular</name></action>
+        </reference>
+
+        <reference name="content">
+            <action method="unsetChild"><name>category.products</name></action>
+            <action method="unsetChild"><name>search.result</name></action>
+        </reference>
+
+        <reference name="right">
+            <action method="unsetChild"><name>right.reports.product.viewed</name></action>
+            <action method="unsetChild"><name>left.reports.product.viewed</name></action>
+            <action method="unsetChild"><name>right.poll</name></action>
+        </reference>
+    </meilisearch_search_handle_prevent_backend_rendering>
+
+    <!-- Click & Conversion Analytics removed - was Algolia-specific -->
+
+</layout>

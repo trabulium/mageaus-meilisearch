@@ -1,0 +1,54 @@
+{
+  "name": "mageaus/meilisearch",
+  "description": "Meilisearch integration for Maho Commerce - Ultra-fast, typo-tolerant search with instant results",
+  "type": "magento-module",
+  "license": "OSL-3.0",
+  "keywords": [
+    "maho",
+    "mahocommerce",
+    "meilisearch",
+    "search",
+    "autocomplete",
+    "instant-search",
+    "faceted-search"
+  ],
+  "authors": [
+    {
+      "name": "Mageaus",
+      "email": "support@mageaus.com"
+    }
+  ],
+  "require": {
+    "php": ">=8.3",
+    "mahocommerce/maho": ">=25.0",
+    "meilisearch/meilisearch-php": "^1.0",
+    "php-http/guzzle7-adapter": "^1.0",
+    "guzzlehttp/guzzle": "^7.0"
+  },
+  "extra": {
+    "magento-root-dir": ".",
+    "map": [
+      [
+        "src/app/code/community/Meilisearch",
+        "app/code/community/Meilisearch"
+      ],
+      [
+        "src/app/etc/modules/Meilisearch_Search.xml",
+        "app/etc/modules/Meilisearch_Search.xml"
+      ],
+      [
+        "src/app/design/frontend/base/default/layout/meilisearch.xml",
+        "app/design/frontend/base/default/layout/meilisearch.xml"
+      ],
+      [
+        "src/app/design/frontend/base/default/template/meilisearch",
+        "app/design/frontend/base/default/template/meilisearch"
+      ],
+      [
+        "src/js/meilisearch",
+        "js/meilisearch"
+      ]
+    ]
+  },
+  "version": "1.19.0"
+}

@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<config>
+    <menu>
+        <system>
+            <children>
+                <meilisearch translate="title" module="meilisearch_search">
+                    <title>Meilisearch Search</title>
+                    <sort_order>93</sort_order>
+                    <children>
+                        <configuration translate="title" module="meilisearch_search">
+                            <title>Configurations</title>
+                            <action>adminhtml/system_config/edit/section/meilisearch</action>
+                            <sort_order>0</sort_order>
+                        </configuration>
+                        <manage translate="title" module="meilisearch_search">
+                            <title>Manage Indexes</title>
+                            <action>adminhtml/meilisearch_manage</action>
+                            <sort_order>5</sort_order>
+                        </manage>
+                        <indexing_queue translate="title" module="meilisearch_search">
+                            <title>Indexing Queue</title>
+                            <action>adminhtml/meilisearch_indexingqueue</action>
+                            <sort_order>10</sort_order>
+                        </indexing_queue>
+                        <queue translate="title" module="meilisearch_search">
+                            <title>Queue Management</title>
+                            <action>adminhtml/meilisearch_queue</action>
+                            <sort_order>15</sort_order>
+                        </queue>
+                        <reindexsku translate="title" module="meilisearch_search">
+                            <title>Reindex SKU(s)</title>
+                            <action>adminhtml/meilisearch_reindexsku</action>
+                            <sort_order>20</sort_order>
+                        </reindexsku>
+                    </children>
+                </meilisearch>
+            </children>
+        </system>
+    </menu>
+    <acl>
+        <resources>
+            <admin>
+                <children>
+                    <system>
+                        <children>
+                            <config>
+                                <children>
+                                    <meilisearch translate="title" module="meilisearch_search">
+                                        <title>Meilisearch Search Configuration</title>
+                                        <sort_order>100</sort_order>
+                                    </meilisearch>
+                                </children>
+                            </config>
+                            <meilisearch_search translate="title" module="meilisearch_search">
+                                <title>Meilisearch Search</title>
+                                <children>
+                                    <manage translate="title" module="meilisearch_search">
+                                        <title>Manage Indexes</title>
+                                        <sort_order>90</sort_order>
+                                    </manage>
+                                    <indexing_queue translate="title" module="meilisearch_search">
+                                        <title>Indexing Queue</title>
+                                        <sort_order>100</sort_order>
+                                    </indexing_queue>
+                                    <queue translate="title" module="meilisearch_search">
+                                        <title>Queue Management</title>
+                                        <sort_order>105</sort_order>
+                                    </queue>
+                                    <reindexsku translate="title" module="meilisearch_search">
+                                        <title>Reindex SKU(s)</title>
+                                        <sort_order>110</sort_order>
+                                    </reindexsku>
+                                </children>
+                            </meilisearch_search>
+                        </children>
+                    </system>
+                </children>
+            </admin>
+        </resources>
+    </acl>
+</config>

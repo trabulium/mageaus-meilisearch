@@ -1,0 +1,277 @@
+<?php
+/**
+ * Meilisearch Configuration Template
+ * Sets up the global JavaScript configuration for frontend search
+ */
+
+// Debug: Output a comment to know this template was loaded
+echo "<!-- Meilisearch Configuration Template Loaded -->\n";
+
+/** @var Meilisearch_Search_Helper_Config $config */
+$config = Mage::helper('meilisearch_search/config');
+
+/** @var Mage_CatalogSearch_Helper_Data $catalogSearchHelper */
+$catalogSearchHelper = $this->helper('catalogsearch');
+
+/** @var Meilisearch_Search_Helper_Data $meilisearchHelper */
+$meilisearchHelper = $this->helper('meilisearch_search');
+
+/** @var Meilisearch_Search_Helper_Entity_Producthelper $productHelper */
+$productHelper = Mage::helper('meilisearch_search/entity_producthelper');
+
+$baseUrl = rtrim(Mage::getBaseUrl(), '/');
+// Debug: Log the base URL
+echo "<!-- DEBUG: BaseUrl = " . htmlspecialchars($baseUrl) . " -->\n";
+
+$isSearchPage = false;
+$isCategoryPage = false;
+
+/** @var Mage_Core_Model_App $app */
+$app = Mage::app();
+
+/** @var Mage_Core_Model_Store $store */
+$store = $app->getStore();
+$storeId = $store->getId();
+
+$currencyCode = $store->getCurrentCurrencyCode();
+$currencySymbol = $app->getLocale()->currency($currencyCode)->getSymbol();
+
+/** @var Mage_Customer_Model_Session $session */
+$session = Mage::getSingleton('customer/session');
+$customerGroupId = $session->getCustomerGroupId();
+
+$priceKey = '.'.$currencyCode.'.default';
+if ($config->isCustomerGroupsEnabled($storeId) && $customerGroupId !== 0) {
+    $priceKey = '.'.$currencyCode.'.group_'.$customerGroupId;
+}
+
+$query = '';
+$path = '';
+$level = '';
+
+$title = '';
+$description = '';
+$content = '';
+$imgHtml = '';
+
+// Handle category page replacement
+if ($config->isInstantEnabled() && $config->replaceCategories() && $app->getRequest()->getControllerName() == 'category') {
+    $category = Mage::registry('current_category');
+
+    if ($category && $category->getDisplayMode() !== 'PAGE') {
+        $category->getUrlInstance()->setStore($storeId);
+
+        $level = -1;
+        foreach ($category->getPathIds() as $treeCategoryId) {
+            if ($path != '') {
+                $path .= ' /// ';
+            }
+
+            $path .= $productHelper->getCategoryName($treeCategoryId, $storeId);
+
+            if ($path) {
+                $level++;
+            }
+        }
+
+        $indexName = $productHelper->getIndexName($storeId);
+        $category_url = $category->getUrl($category);
+        $isSearchPage = true;
+        $isCategoryPage = true;
+    }
+
+    // Handle category static header
+    $title = $category->getName();
+
+    if ($category && $category->getDisplayMode() !== 'PAGE') {
+        $category->getUrlInstance()->setStore(Mage::app()->getStore()->getStoreId());
+
+        if ($category->getDisplayMode() == 'PRODUCTS_AND_PAGE') {
+            $page = $category->getLandingPage();
+            $cms_block = Mage::getModel('cms/block')->load($page);
+
+            $description = $category->getDescription();
+            $content = $this->getLayout()->createBlock('cms/block')->setBlockId($page)->toHtml();
+
+            if ($category->getImageUrl()) {
+                $imgHtml = '<p class="category-image"><img src="'.$category->getImageUrl().'" alt="'.$this->escapeHtml($category->getName()).'" title="'.$this->escapeHtml($category->getName()).'" /></p>';
+                $imgHtml = $this->helper('catalog/output')->categoryAttribute($category, $imgHtml, 'image');
+            }
+        }
+    }
+}
+
+// Handle search page
+$facets = $config->getFacets();
+$areCategoriesInFacets = false;
+
+if ($config->isInstantEnabled()) {
+    $pageIdentifier = $app->getFrontController()->getAction()->getFullActionName();
+
+    if ($pageIdentifier === 'catalogsearch_result_index') {
+        $query = $catalogSearchHelper->getEscapedQueryText();
+
+        if ($query == '__empty__') {
+            $query = '';
+        }
+
+        $isSearchPage = true;
+    }
+
+    foreach ($facets as $facet) {
+        if ($facet['attribute'] === 'categories') {
+            $areCategoriesInFacets = true;
+            break;
+        }
+    }
+
+    /** @var Meilisearch_Search_Helper_Logger $logger */
+    $logger = Mage::helper('meilisearch_search/logger');
+    if ($logger->isEnable() && $config->indexWholeCategoryTree() === false && $areCategoriesInFacets === true) {
+        $logger->log('!! Warning !! You have enabled categories\' hierarchical widget but you do not index whole categories tree. The widget does not display correct data.');
+    }
+}
+
+// Build Meilisearch configuration
+$autocompleteSections = $config->getAutocompleteSections();
+
+// Additional frontend filtering to ensure amasty_pages is not included if module is not installed
+if (is_array($autocompleteSections)) {
+    $filteredSections = array();
+    foreach ($autocompleteSections as $section) {
+        if (isset($section['name']) && $section['name'] === 'amasty_pages') {
+            // Double-check if Amasty Shopby is installed
+            $modules = (array)Mage::getConfig()->getNode('modules')->children();
+            if (!isset($modules['Amasty_Shopby']) || !$modules['Amasty_Shopby']->is('active')) {
+                continue; // Skip this section
+            }
+        }
+        $filteredSections[] = $section;
+    }
+    $autocompleteSections = $filteredSections;
+}
+
+// Debug: Final check
+echo "<!-- DEBUG: Final BaseUrl before config = " . htmlspecialchars($baseUrl) . " -->\n";
+echo "<!-- DEBUG: ServerUrl will be = " . htmlspecialchars($baseUrl . '/meilisearch') . " -->\n";
+$meilisearchJsConfig = array(
+    'instant' => array(
+        'enabled' => $config->isInstantEnabled(),
+        'infiniteScrollEnabled' => $config->isInfiniteScrollEnabled(),
+        'selector' => $config->getInstantSelector(),
+        'isAddToCartEnabled' => $config->isAddToCartEnable(),
+        'showStaticContent' => ($title || $imgHtml || $description || $content),
+        'title' => $title,
+        'description' => $description,
+        'content' => $content,
+        'imgHtml' => $imgHtml,
+        'hasFacets' => count($facets) > 0,
+    ),
+    'autocomplete' => array(
+        'enabled' => $config->isAutoCompleteEnabled(),
+        'selector' => $config->getAutocompleteSelector(),
+        'sections' => $autocompleteSections,
+        'nbOfProductsSuggestions' => $config->getNumberOfProductsSuggestions(),
+        'nbOfCategoriesSuggestions' => $config->getNumberOfCategoriesSuggestions(),
+        'nbOfQueriesSuggestions' => $config->getNumberOfQueriesSuggestions(),
+        'nbOfPagesSuggestions' => $config->getNumberOfPagesSuggestions(),
+        'displaySuggestionsCategories' => $config->displaySuggestionsCategories(),
+        'isDebugEnabled' => $config->isAutocompleteDebugEnabled(),
+    ),
+    'extensionVersion' => $config->getExtensionVersion(),
+    'serverUrl' => $baseUrl . $config->getSearchResultsUrl($storeId), // Use configured search results URL
+    'indexName' => $productHelper->getBaseIndexName(),
+    'indexPrefix' => $config->getIndexPrefix(),
+    'facets' => $facets,
+    'areCategoriesInFacets' => $areCategoriesInFacets,
+    'hitsPerPage' => (int) $config->getNumberOfProductResults(),
+    'sortingIndices' => array_values($config->getSortingIndices()),
+    'isSearchPage' => $isSearchPage,
+    'isCategoryPage' => $isCategoryPage,
+    'removeBranding' => $config->isRemoveBranding(),
+    'priceKey' => $priceKey,
+    'currencyCode' => $currencyCode,
+    'currencySymbol' => $currencySymbol,
+    'priceFormat' => Mage::app()->getLocale()->getJsPriceFormat(),
+    'maxValuesPerFacet' => (int) $config->getMaxValuesPerFacet(),
+    'autofocus' => true,
+    'displayedAttributes' => $productHelper->getDisplayedAttributes($storeId),
+    'analytics' => array(
+        'enabled' => $config->isEnabledAnalytics(),
+        'delay' => $config->getAnalyticsDelay(),
+        'triggerOnUIInteraction' => $config->getTriggerOnUIInteraction(),
+        'pushInitialSearch' => $config->getPushInitialSearch(),
+    ),
+    'request' => array(
+        'query' => html_entity_decode($query),
+        'path' => $path,
+        'level' => $level,
+        'formKey' => Mage::getSingleton('core/session')->getFormKey(),
+    ),
+    'showCatsNotIncludedInNavigation' => $config->showCatsNotIncludedInNavigation(),
+    'showSuggestionsOnNoResultsPage' => $config->showSuggestionsOnNoResultsPage(),
+    'baseUrl' => $baseUrl,
+    'popularQueries' => $config->getPopularQueries(),
+    'useAdaptiveImage' => $config->useAdaptiveImage(),
+    'urlTrackedParameters' => array('query', 'attribute:*', 'index', 'page'),
+    'urls' => array(
+        'logo' => $this->getSkinUrl('images/meilisearch-logo.svg'), // You'll need to add this logo
+    ),
+    'now' => Mage::app()->getLocale()->storeDate()->getTimestamp(),
+    'translations' => array(
+        'to' => $this->__('to'),
+        'or' => $this->__('or'),
+        'go' => $this->__('Go'),
+        'in' => $this->__('in'),
+        'popularQueries' => $this->__('You can try one of the popular search queries'),
+        'seeAll' => $this->__('See all products'),
+        'allDepartments' => $this->__('All departments'),
+        'seeIn' => $this->__('See products in'),
+        'orIn' => $this->__('or in'),
+        'noProducts' => $this->__('No products for query'),
+        'noResults' => $this->__('No results'),
+        'refine' => $this->__('Refine'),
+        'selectedFilters' => $this->__('Selected Filters'),
+        'clearAll' => $this->__('Clear all'),
+        'previousPage' => $this->__('Previous page'),
+        'nextPage' => $this->__('Next page'),
+        'searchFor' => $this->__('Search for products'),
+        'relevance' => $this->__('Relevance'),
+        'categories' => $this->__('Categories'),
+        'products' => $this->__('Products'),
+        'searchBy' => $this->__('Search by'),
+        'showMore' => $this->__('Show more products'),
+        'searchForFacetValuesPlaceholder' => $this->__('Search for other ...'),
+    ),
+);
+
+// Allow extension via events
+$transport = new Varien_Object($meilisearchJsConfig);
+Mage::dispatchEvent('meilisearch_after_create_configuration', array('configuration' => $transport));
+$meilisearchJsConfig = $transport->getData();
+
+// Hide instant search selector to prevent flickering
+if ($meilisearchJsConfig['instant']['enabled'] && $meilisearchJsConfig['isSearchPage']) {
+    echo '
+    <script>
+        document.write(\'<style type="text/css"> ' . $config->getInstantSelector() . '{display:none}</style>\');
+    </script>';
+}
+
+?>
+
+<script>
+    window.meilisearchConfig = <?php echo json_encode($meilisearchJsConfig, JSON_UNESCAPED_SLASHES); ?>;
+</script>
+
+<!--[if lte IE 9]>
+<script>
+    document.addEventListener("DOMContentLoaded", function(e) {
+        if (window.meilisearchBundle && window.meilisearchBundle.$) {
+            window.meilisearchBundle.$(function ($) {
+                window.meilisearchConfig.autofocus = false;
+            });
+        }
+    });
+</script>
+<![endif]-->
