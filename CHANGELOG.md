@@ -5,6 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.19.1] - 2025-01-15
+
+### Fixed
+- Added missing public assets (JavaScript internals, CSS, and SVG files)
+- Added complete skin/frontend/base/default CSS and images
+- Added skin/adminhtml CSS files
+- Updated composer.json mappings for all asset directories
+
+### Assets Added
+**JavaScript**:
+- `mustache.min.js` - Mustache template engine
+- `jquery-test.js` and `jquery-capture.js` - jQuery compatibility helpers
+- `internals/frontend/` - Frontend JavaScript bundles and utilities
+- `internals/adminhtml/` - Admin panel JavaScript bundles
+
+**CSS**:
+- `skin/frontend/base/default/css/meilisearch/` - Autocomplete and main CSS
+- `skin/frontend/base/default/meilisearch/` - Additional frontend CSS
+- `skin/adminhtml/base/default/meilisearch/` - Admin panel CSS
+
+**Images**:
+- `meilisearch-admin-menu.svg` - Admin menu icon
+- `stars-icon.svg` - Rating stars icon
+
 ## [1.19.0] - 2025-01-14
 
 ### Initial Release

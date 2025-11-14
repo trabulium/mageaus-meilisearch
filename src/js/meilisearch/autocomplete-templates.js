@@ -238,18 +238,31 @@
                 );
             }
 
-            // Search Amasty pages (displayed as Suggestions)
-            const amastyPageIndex = client.index(config.indexName + '_amasty_pages');
-            searchPromises.push(
-                amastyPageIndex.search(query, {
-                    limit: 5,
-                    attributesToHighlight: ['name', 'content']
-                }).then(response => ({
-                    type: 'amasty_pages',
-                    hits: response.hits,
-                    query: query
-                }))
-            );
+            // Search Amasty pages (displayed as Suggestions) - only if enabled
+            const amastySection = config.autocomplete.sections && config.autocomplete.sections.find(s => s.name === 'amasty_pages');
+            if (amastySection && amastySection.enabled) {
+                const amastyPageIndex = client.index(config.indexName + '_amasty_pages');
+                searchPromises.push(
+                    amastyPageIndex.search(query, {
+                        limit: 5,
+                        attributesToHighlight: ['name', 'content']
+                    }).then(response => ({
+                        type: 'amasty_pages',
+                        hits: response.hits,
+                        query: query
+                    })).catch(error => {
+                        // If the index doesn't exist or there's an error, just return empty results
+                        if (config.autocomplete.isDebugEnabled) {
+                            console.log('Meilisearch: Amasty pages index not found or error:', error);
+                        }
+                        return {
+                            type: 'amasty_pages',
+                            hits: [],
+                            query: query
+                        };
+                    })
+                );
+            }
 
             // Execute all searches
             currentRequest = Promise.all(searchPromises)
@@ -272,36 +285,49 @@
             const productsSection = results.find(r => r.type === 'products');
             const sidebarSections = results.filter(r => r.type !== 'products');
             
-            // Left column: Suggestions and Categories
-            if (sidebarSections.length > 0) {
-                html += '<div class="meilisearch-autocomplete-left-column">';
-                
-                // Sort sidebar sections - amasty_pages first, then categories, then pages
-                const sortedSidebar = sidebarSections.sort((a, b) => {
-                    const order = { 'amasty_pages': 0, 'categories': 1, 'pages': 2, 'suggestions': 3 };
-                    return (order[a.type] || 999) - (order[b.type] || 999);
-                });
-                
-                // Debug: log section order
-                if (config.autocomplete.isDebugEnabled) {
-                    console.log('Sidebar sections order:', sortedSidebar.map(s => s.type));
-                }
-                
-                sortedSidebar.forEach(section => {
-                    if (section.hits && section.hits.length > 0) {
-                        html += renderSection(section);
-                    }
-                });
-                
+            // Check if we have any results at all
+            const hasProducts = productsSection && productsSection.hits && productsSection.hits.length > 0;
+            const hasSidebarResults = sidebarSections.some(section => section.hits && section.hits.length > 0);
+            
+            // Always render the products section to maintain layout
+            if (productsSection && productsSection.hits && productsSection.hits.length > 0) {
+                html += renderSection(productsSection);
+            } else {
+                // Show "No products" message in products section - maintain the same structure
+                html += '<div class="meilisearch-autocomplete-section meilisearch-autocomplete-section-products" data-type="products">';
+                html += '<div class="meilisearch-autocomplete-section-title">' + (config.translations.products || 'Products') + '</div>';
+                html += '<div class="meilisearch-autocomplete-no-results-message">';
+                html += config.translations.noProductsFor ? 
+                    config.translations.noProductsFor.replace('%s', escapeHtml(query)) : 
+                    'No products for query "' + escapeHtml(query) + '"';
+                html += '</div>';
                 html += '</div>';
             }
             
-            // Right column: Products
-            if (productsSection && productsSection.hits && productsSection.hits.length > 0) {
-                html += '<div class="meilisearch-autocomplete-right-column">';
-                html += renderSection(productsSection);
-                html += '</div>';
+            // Sidebar: Suggestions and Categories
+            html += '<div class="meilisearch-autocomplete-sidebar">';
+            
+            // Sort sidebar sections - amasty_pages first, then categories, then pages
+            const sortedSidebar = sidebarSections.sort((a, b) => {
+                const order = { 'amasty_pages': 0, 'categories': 1, 'pages': 2, 'suggestions': 3 };
+                return (order[a.type] || 999) - (order[b.type] || 999);
+            });
+            
+            // Debug: log section order
+            if (config.autocomplete.isDebugEnabled) {
+                console.log('Sidebar sections order:', sortedSidebar.map(s => s.type));
             }
+            
+            sortedSidebar.forEach(section => {
+                if (section.hits && section.hits.length > 0) {
+                    html += renderSection(section);
+                } else {
+                    // Show "No results" for empty sections
+                    html += renderEmptySection(section);
+                }
+            });
+            
+            html += '</div>';
 
             // Add footer outside the wrapper
             html += '</div>'; // Close wrapper
@@ -340,9 +366,7 @@
                     // Prepare data for template
                     const data = prepareHitData(hit, section.type);
                     html += '<div class="meilisearch-autocomplete-hit" data-type="' + section.type + '" data-id="' + hit.objectID + '">';
-                    html += '<a href="' + hit.url + '" class="meilisearch-autocomplete-' + section.type.slice(0, -1) + '">';
                     html += Mustache.render(template, data);
-                    html += '</a>';
                     html += '</div>';
                 });
             } else {
@@ -357,6 +381,26 @@
             html += '</div>';
             html += '</div>';
             
+            return html;
+        }
+
+        // Render empty section with "No results" message
+        function renderEmptySection(section) {
+            const sectionClass = 'meilisearch-autocomplete-section-' + section.type;
+            let html = '<div class="meilisearch-autocomplete-section ' + sectionClass + ' meilisearch-autocomplete-section-empty" data-type="' + section.type + '">';
+            
+            // Section header
+            let sectionLabel = getSectionLabel(section.type);
+            if (sectionLabel) {
+                html += '<div class="meilisearch-autocomplete-section-title">' + sectionLabel + '</div>';
+            }
+            
+            // No results message
+            html += '<div class="meilisearch-autocomplete-no-results-message">';
+            html += config.translations.noResults || 'No results';
+            html += '</div>';
+            
+            html += '</div>';
             return html;
         }
 
@@ -563,6 +607,13 @@
                     break;
             }
         });
+    }
+    
+    // Escape HTML for security
+    function escapeHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
     }
 
 })();

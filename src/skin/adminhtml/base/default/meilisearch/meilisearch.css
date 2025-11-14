@@ -1,0 +1,31 @@
+.meilisearchsearch-queue-notification {
+	background: #e9f3ff url(/skin/frontend/base/default/meilisearch_search/meilisearch-admin-menu.svg) no-repeat 27px 5px;
+	background-size: 16px 16px;
+	border-color: #bee1ee;
+}
+
+.meilisearchsearch-head-icon {
+	background: url(/skin/frontend/base/default/meilisearch_search/meilisearch-admin-menu.svg) no-repeat;
+	background-size: 16px 16px;
+}
+
+.meilisearch-notice {
+	border: 1px solid #dfdfdf;
+	background-position: 10px 10px;
+	padding-left: 35px;
+	padding-top: 10px;
+	margin-bottom: 1rem;
+	color: #333;
+	font-size: 13px;
+}
+
+.meilisearchsearch-config-info {
+	border: 1px solid #D6D6D6;
+	padding: 16px 20px 15px 56px;
+	margin: 7px 0;
+}
+
+
+.meilisearchsearch-config-info.icon-stars {
+	background: 19px 13px url(/skin/frontend/base/default/meilisearch_search/stars-icon.svg) no-repeat;
+}

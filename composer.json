@@ -47,8 +47,24 @@
       [
         "src/js/meilisearch",
         "js/meilisearch"
+      ],
+      [
+        "src/skin/frontend/base/default/css/meilisearch",
+        "skin/frontend/base/default/css/meilisearch"
+      ],
+      [
+        "src/skin/frontend/base/default/meilisearch",
+        "skin/frontend/base/default/meilisearch"
+      ],
+      [
+        "src/skin/frontend/base/default/meilisearch_search",
+        "skin/frontend/base/default/meilisearch_search"
+      ],
+      [
+        "src/skin/adminhtml/base/default/meilisearch",
+        "skin/adminhtml/base/default/meilisearch"
       ]
     ]
   },
-  "version": "1.19.0"
+  "version": "1.19.1"
 }
