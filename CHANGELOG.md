@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.19.6] - 2025-01-15
+
+### Fixed
+- **CRITICAL**: Removed hard dependency on `maho_pos` helper
+- POS barcode functionality is now optional and won't crash if POS module isn't installed
+- Wrapped all `Mage::helper('maho_pos')` calls in try-catch blocks with proper checks
+- Fixed fatal error: "Call to a member function getBarcodeAttributeCode() on false"
+
+### Changed
+- POS barcode indexing now gracefully skips if POS module is not available
+- Added method existence checks before calling POS helper methods
+
 ## [1.19.5] - 2025-01-15
 
 ### Fixed

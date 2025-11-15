@@ -214,10 +214,19 @@ class Meilisearch_Search_Helper_Entity_Producthelper extends Meilisearch_Search_
         $unretrievableAttributes = array();
         $attributesForFaceting = array();
 
-        // Always add configured barcode attribute and child barcodes as searchable (for POS barcode scanning)
-        $barcodeAttributeCode = Mage::helper('maho_pos')->getBarcodeAttributeCode();
-        $searchableAttributes[] = $barcodeAttributeCode;
-        $searchableAttributes[] = 'child_' . $barcodeAttributeCode;
+        // Optionally add configured barcode attribute if POS module exists (for POS barcode scanning)
+        try {
+            $posHelper = Mage::helper('maho_pos');
+            if ($posHelper && method_exists($posHelper, 'getBarcodeAttributeCode')) {
+                $barcodeAttributeCode = $posHelper->getBarcodeAttributeCode();
+                if ($barcodeAttributeCode) {
+                    $searchableAttributes[] = $barcodeAttributeCode;
+                    $searchableAttributes[] = 'child_' . $barcodeAttributeCode;
+                }
+            }
+        } catch (Exception $e) {
+            // POS module not installed, skip barcode attributes
+        }
 
         foreach ($this->config->getProductAdditionalAttributes($storeId) as $attribute) {
             if ($attribute['searchable'] == '1') {
@@ -1083,28 +1092,36 @@ class Meilisearch_Search_Helper_Entity_Producthelper extends Meilisearch_Search_
 
         $customData['type_id'] = $type;
 
-        // For POS: Add child barcodes to configurable products for barcode scanning
+        // For POS: Add child barcodes to configurable products for barcode scanning (if POS module exists)
         if (($type == 'configurable' || $type == 'grouped') && $sub_products && count($sub_products) > 0) {
-            $childBarcodes = [];
+            try {
+                $posHelper = Mage::helper('maho_pos');
+                if ($posHelper && method_exists($posHelper, 'getBarcodeAttributeCode')) {
+                    $barcodeAttributeCode = $posHelper->getBarcodeAttributeCode();
 
-            // Get configured barcode attribute code
-            $barcodeAttributeCode = Mage::helper('maho_pos')->getBarcodeAttributeCode();
+                    if ($barcodeAttributeCode) {
+                        $childBarcodes = [];
 
-            // Check if barcode attribute exists before trying to access it
-            $barcodeAttribute = $product->getResource()->getAttribute($barcodeAttributeCode);
+                        // Check if barcode attribute exists before trying to access it
+                        $barcodeAttribute = $product->getResource()->getAttribute($barcodeAttributeCode);
 
-            if ($barcodeAttribute && $barcodeAttribute->getId()) {
-                foreach ($sub_products as $subProduct) {
-                    $barcode = $subProduct->getData($barcodeAttributeCode);
-                    if ($barcode && !empty($barcode)) {
-                        $childBarcodes[] = $barcode;
+                        if ($barcodeAttribute && $barcodeAttribute->getId()) {
+                            foreach ($sub_products as $subProduct) {
+                                $barcode = $subProduct->getData($barcodeAttributeCode);
+                                if ($barcode && !empty($barcode)) {
+                                    $childBarcodes[] = $barcode;
+                                }
+                            }
+
+                            if (!empty($childBarcodes)) {
+                                // Keep parent barcode in main field, add all child barcodes to array
+                                $customData['child_' . $barcodeAttributeCode] = $childBarcodes;
+                            }
+                        }
                     }
                 }
-
-                if (!empty($childBarcodes)) {
-                    // Keep parent barcode in main field, add all child barcodes to array
-                    $customData['child_' . $barcodeAttributeCode] = $childBarcodes;
-                }
+            } catch (Exception $e) {
+                // POS module not installed, skip child barcode indexing
             }
         }
 
