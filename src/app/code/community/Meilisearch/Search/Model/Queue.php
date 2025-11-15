@@ -119,7 +119,7 @@ class Meilisearch_Search_Model_Queue
 
         $this->db->insert($this->logTable, $this->logRecord);
 
-        $this->db->closeConnection();
+        // Connection management handled automatically by Maho
     }
 
     public function run($maxJobs)
@@ -265,7 +265,7 @@ class Meilisearch_Search_Model_Queue
             $this->db->commit();
         } catch (\Exception $e) {
             $this->db->rollBack();
-            $this->db->closeConnection();
+            // Connection management handled automatically by Maho
 
             throw $e;
         }
