@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.19.11] - 2025-01-15
+
+### Fixed
+- **CRITICAL**: Moved frontend templates to correct directory structure
+- Templates moved from `app/design/frontend/base/default/meilisearch/` to `app/design/frontend/base/default/template/meilisearch/`
+- Fixes search box disappearing and autocomplete not rendering
+- Removed hardcoded Moogento jQuery dependency from layout XML
+- Frontend now uses theme's jQuery or CDN jQuery instead
+
+### Changed
+- Reorganized frontend template structure to match Maho/Magento conventions
+- Removed vendor-specific JavaScript dependencies
+
 ## [1.19.10] - 2025-01-15
 
 ### Fixed

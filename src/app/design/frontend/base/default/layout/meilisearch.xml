@@ -7,7 +7,7 @@
             <action method="addCss"><stylesheet>meilisearch/meilisearch.css</stylesheet></action>
             <action method="addCss"><stylesheet>meilisearch/autocomplete.css</stylesheet></action>
 
-            <action method="addJs"><script>moogento/general/jquery.min.js</script></action>
+            <!-- jQuery loaded via CDN or theme - removed Moogento dependency -->
             <action method="addJs"><script>meilisearch/internals/frontend/Function.prototype.bind.js</script></action>
             <action method="addJs"><script>meilisearch/internals/frontend/meilisearch-client.js</script></action>
             <action method="addJs"><script>meilisearch/internals/frontend/meilisearchBundle.js</script></action>
