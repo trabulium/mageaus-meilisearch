@@ -34,7 +34,9 @@ $store = $app->getStore();
 $storeId = $store->getId();
 
 $currencyCode = $store->getCurrentCurrencyCode();
-$currencySymbol = $app->getLocale()->currency($currencyCode)->getSymbol();
+// Fix for PHP 8.3+ compatibility - getSymbol() requires argument
+$currency = Mage::getModel('directory/currency')->load($currencyCode);
+$currencySymbol = $currency->getCurrencySymbol() ?: $currencyCode;
 
 /** @var Mage_Customer_Model_Session $session */
 $session = Mage::getSingleton('customer/session');
@@ -179,7 +181,8 @@ $meilisearchJsConfig = array(
         'isDebugEnabled' => $config->isAutocompleteDebugEnabled(),
     ),
     'extensionVersion' => $config->getExtensionVersion(),
-    'serverUrl' => $baseUrl . $config->getSearchResultsUrl($storeId), // Use configured search results URL
+    'serverUrl' => $config->getServerUrl($storeId), // Meilisearch API server URL
+    'searchResultsUrl' => $baseUrl . $config->getSearchResultsUrl($storeId), // Maho search results page
     'indexName' => $productHelper->getBaseIndexName(),
     'indexPrefix' => $config->getIndexPrefix(),
     'facets' => $facets,

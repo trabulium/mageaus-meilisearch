@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.1] - 2025-01-15
+
+### Fixed
+- **CRITICAL**: Fixed PHP 8.3+ compatibility issue with currency symbol retrieval
+- Fixed `ArgumentCountError: NumberFormatter::getSymbol() expects exactly 1 argument`
+- Changed to use `Mage::getModel('directory/currency')->getCurrencySymbol()` for PHP 8.3+ compatibility
+- Fixed `serverUrl` configuration to point to actual Meilisearch API server instead of Maho search results page
+- Added separate `searchResultsUrl` field for Maho search results page URL
+
 ## [2.0.0] - 2025-01-15
 
 ### BREAKING CHANGES
