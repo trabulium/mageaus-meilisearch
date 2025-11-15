@@ -110,7 +110,32 @@ Index your products, categories, and pages:
 # Select "Meilisearch" indexes and click "Reindex"
 ```
 
-### 4. Test Your Search
+### 4. Configure Web Server (Nginx or Apache)
+
+For frontend search to work, you need to proxy Meilisearch requests through your web server. This keeps your API key secure on the server side.
+
+**Nginx Configuration** (see `nginx-meilisearch.conf`):
+```bash
+# Add to your site's server block
+location /meilisearch/ {
+    proxy_pass http://localhost:7700/;
+    proxy_set_header Authorization "Bearer YOUR_MEILISEARCH_API_KEY";
+    # ... (see nginx-meilisearch.conf for full configuration)
+}
+```
+
+**Apache Configuration** (see `apache-meilisearch.conf`):
+```apache
+<Location /meilisearch/>
+    ProxyPass http://localhost:7700/
+    RequestHeader set Authorization "Bearer YOUR_MEILISEARCH_API_KEY"
+    # ... (see apache-meilisearch.conf for full configuration)
+</Location>
+```
+
+**Important**: Replace `YOUR_MEILISEARCH_API_KEY` with your actual Meilisearch API key. See the configuration files for complete setup instructions.
+
+### 5. Test Your Search
 
 Visit your store and try searching - you should see instant autocomplete results!
 
