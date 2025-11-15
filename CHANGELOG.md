@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.19.10] - 2025-01-15
+
+### Fixed
+- **CRITICAL**: Fixed missing frontend layout file
+- Moved meilisearch.xml to correct location: `app/design/frontend/base/default/layout/`
+- Fixes frontend Meilisearch autocomplete and instant search not loading
+- Layout file was incorrectly placed directly in `app/design/frontend/base/default/` instead of `layout/` subdirectory
+
+### Changed
+- Reorganized package structure to match Maho/Magento layout conventions
+
 ## [1.19.9] - 2025-01-15
 
 ### Fixed
