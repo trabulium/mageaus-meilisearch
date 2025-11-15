@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.19.8] - 2025-01-15
+
+### Removed
+- Removed admin menu icon CSS styling
+- Removed meilisearch-admin-menu class from system configuration
+- Removed background SVG icons from notification and head icon styles
+- Cleaned up label to just "Meilisearch Search" without version number
+
+### Changed
+- Simplified admin menu appearance to use default Maho styling
+
 ## [1.19.7] - 2025-01-15
 
 ### Fixed

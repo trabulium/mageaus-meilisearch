@@ -4,24 +4,8 @@
         <meilisearch translate="label" module="meilisearch_search">
             <label>
                 <![CDATA[
-                Meilisearch Search 1.19.0
+                Meilisearch Search
                 <style>
-                    .meilisearch-admin-menu span {
-                        padding-left: 38px !important;
-                        background: url("/skin/frontend/base/default/meilisearch_search/meilisearch-admin-menu.svg") !important;
-                        background-position: 17px 5px !important;
-                        background-repeat: no-repeat !important;
-                        background-size: 16px 16px !important;
-                        border-bottom: 1px dotted #636363;
-                    }
-                    .meilisearch-admin-menu.active span {
-                        background: white url("/skin/frontend/base/default/meilisearch_search/meilisearch-admin-menu.svg") !important;
-                        background-position: 17px 5px !important;
-                        background-repeat: no-repeat !important;
-                        background-size: 16px 16px !important;
-                        border-bottom: none;
-                    }
-
                     span.meilisearch-config-warning {
                         font-size: 25px;
                         color: #D83900;
@@ -35,7 +19,6 @@
                 </style>
                 ]]>
             </label>
-            <class>meilisearch-admin-menu</class>
             <tab>catalog</tab>
             <frontend_type>text</frontend_type>
             <sort_order>52</sort_order>
