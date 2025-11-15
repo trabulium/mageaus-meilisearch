@@ -5,6 +5,49 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2025-01-15
+
+### BREAKING CHANGES
+- **Complete removal of jQuery dependency**
+- Frontend autocomplete completely rewritten in vanilla JavaScript
+- Old jQuery-based JavaScript files no longer loaded
+- Modern ES6+ JavaScript using native fetch() API
+- Cleaner, faster, more maintainable codebase
+
+### Added
+- `autocomplete-vanilla.js`: Pure vanilla JavaScript autocomplete implementation
+- `autocomplete-vanilla.css`: Clean, modern CSS for autocomplete dropdown
+- Debounced search input for better performance
+- Native DOM manipulation (no jQuery selectors)
+- Keyboard navigation support (Escape to close)
+- Click-outside-to-close functionality
+- Loading states and animations
+- Mobile-responsive design
+- Highlighted search terms in results
+- "See all results" footer link with result count
+
+### Changed
+- Layout XML simplified - only loads necessary scripts
+- Autocomplete now uses native fetch() instead of jQuery AJAX
+- Dropdown positioning and styling completely redesigned
+- Search results display with product images, names, and prices
+- Configuration still provided via `window.meilisearchConfig`
+
+### Removed
+- jQuery dependency (all references removed)
+- Old autocomplete.js (jQuery-based)
+- Old instantsearch.js (jQuery-based)
+- meilisearchBundle.js (jQuery wrapper)
+- jquery-capture.js (no longer needed)
+- jquery-test.js (no longer needed)
+- All jQuery-specific code and workarounds
+
+### Performance
+- Smaller JavaScript bundle size (removed ~85KB jQuery)
+- Faster page load times
+- Reduced DOM manipulation overhead
+- Modern browser APIs for better performance
+
 ## [1.19.11] - 2025-01-15
 
 ### Fixed
