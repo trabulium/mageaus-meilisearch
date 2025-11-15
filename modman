@@ -1,0 +1,10 @@
+# Meilisearch module files
+src/app/code/community/Meilisearch                          app/code/community/Meilisearch
+src/app/etc/modules/Meilisearch_Search.xml                  app/etc/modules/Meilisearch_Search.xml
+src/app/design/frontend/base/default/layout/meilisearch.xml app/design/frontend/base/default/layout/meilisearch.xml
+src/app/design/frontend/base/default/template/meilisearch   app/design/frontend/base/default/template/meilisearch
+src/js/meilisearch                                          js/meilisearch
+src/skin/frontend/base/default/css/meilisearch              skin/frontend/base/default/css/meilisearch
+src/skin/frontend/base/default/meilisearch                  skin/frontend/base/default/meilisearch
+src/skin/frontend/base/default/meilisearch_search           skin/frontend/base/default/meilisearch_search
+src/skin/adminhtml/base/default/meilisearch                 skin/adminhtml/base/default/meilisearch

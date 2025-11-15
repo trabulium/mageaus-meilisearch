@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.19.5] - 2025-01-15
+
+### Fixed
+- **CRITICAL**: Fixed autoloader to work correctly when installed via Composer
+- Autoloader now checks if classes are already loaded before trying to require vendor/autoload.php
+- Added multiple fallback methods for finding Composer autoloader
+- Uses `Mage::getBaseDir()` when available for reliable path detection
+- Fixes "Meilisearch PHP SDK not found" error when module is in vendor directory
+- Added `modman` file for better compatibility with maho-composer-plugin
+
+### Added
+- Proper modman file for traditional Maho/OpenMage package structure
+- Improved autoloader with better Composer package support
+
 ## [1.19.4] - 2025-01-15
 
 ### Fixed
