@@ -648,11 +648,11 @@ class Meilisearch_Search_Helper_Meilisearchhelper extends Mage_Core_Helper_Abstr
     protected function convertSynonyms($synonyms)
     {
         if (empty($synonyms)) {
-            return new \stdClass(); // Return empty object for Meilisearch
+            return []; // Return empty array for Meilisearch
         }
-        
+
         $meilisearchSynonyms = [];
-        
+
         foreach ($synonyms as $synonym) {
             if (isset($synonym['type']) && $synonym['type'] === 'oneWaySynonym') {
                 $meilisearchSynonyms[$synonym['input']] = $synonym['synonyms'];
@@ -669,8 +669,8 @@ class Meilisearch_Search_Helper_Meilisearchhelper extends Mage_Core_Helper_Abstr
                 }
             }
         }
-        
-        return empty($meilisearchSynonyms) ? new \stdClass() : $meilisearchSynonyms;
+
+        return $meilisearchSynonyms;
     }
 
     /**
