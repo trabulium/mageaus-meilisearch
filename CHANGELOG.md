@@ -5,12 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.19.4] - 2025-01-15
+
+### Fixed
+- Changed Maho version constraint to `*` to support all installation types
+- Fixes "root package cannot be modified" error when Maho is the root package
+- Works with tagged releases, dev-main, and any custom Maho installations
+- Previous attempts with specific version constraints failed due to Composer root package limitations
+
 ## [1.19.3] - 2025-01-15
 
 ### Fixed
-- Composer version constraint now accepts `dev-main` Maho installations
-- Previously required tagged releases (>=25.0), which failed with dev-main installations
-- Changed requirement from `"mahocommerce/maho": ">=25.0"` to `"mahocommerce/maho": ">=25.0 || dev-main"`
+- Attempted fix for dev-main installations (superseded by 1.19.4)
 
 ## [1.19.2] - 2025-01-15
 
